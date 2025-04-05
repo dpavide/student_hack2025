@@ -17,6 +17,9 @@ def calculate_angle(a, b, c):
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
     return np.degrees(angle)
 
+def calculate_midpoint(a, b):
+    return (a+b)/2
+
 # --- Main loop for openCV ---
 cap = cv2.VideoCapture(0)
 
@@ -41,27 +44,56 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
                         int(landmark.y * frame.shape[0]),
                         landmark.z]
             
-            # Left-side landmarks
+            # Arm landmarks
             shoulderL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER])
             elbowL    = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ELBOW])
             wristL    = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_WRIST])
-
-            # Right-side landmarks
             shoulderR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER])
             elbowR    = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW])
             wristR    = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_WRIST])
 
-            # Calculate elbow angles for each arm.
-            angleL = int(calculate_angle(shoulderL, elbowL, wristL))
-            angleR = int(calculate_angle(shoulderR, elbowR, wristR))
+            # Lower body landmarks
+            hipL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HIP])
+            hipR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HIP])
+            kneeL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_KNEE])
+            kneeR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_KNEE])
+            ankleL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE])
+            ankleR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE])
+            heelL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HEEL])
+            heelR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HEEL])
+            footIndexL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX])
+            footIndexR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX])
 
-            # Put text on screen for debug
-            cv2.putText(image, f'{angleL}', (elbowL[0] - 30, elbowL[1] - 10),
+
+
+            # Calculate elbow angles for each arm
+            angleElbowL = int(calculate_angle(shoulderL, elbowL, wristL))
+            angleElbowR = int(calculate_angle(shoulderR, elbowR, wristR))
+
+            # Calculate knee angles for each leg,
+            angleKneeL = int(calculate_angle(hipL, kneeL, ankleL))
+            angleKneeR = int(calculate_angle(hipR, kneeR, ankleR))
+
+            # Find midpoints
+            midpointShoulder = calculate_midpoint(shoulderL, shoulderR)
+            midpointHips = calculate_midpoint(hipL, hipR)
+            midpointKnees = calculate_midpoint(kneeL, kneeR)
+
+            # Calculate back angle
+            angleBack = calculate_angle(midpointShoulder, midpointHips, midpointKnees)
+
+            # --- Debug text ---
+            cv2.putText(image, f'{angleElbowL}', (elbowL[0] - 30, elbowL[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(image, f'{angleR}', (elbowR[0] - 30, elbowR[1] - 10),
+            cv2.putText(image, f'{angleElbowR}', (elbowR[0] - 30, elbowR[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleKneeL}', (kneeL[0] - 30, angleKneeL[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleKneeR}', (kneeR[0] - 30, kneeR[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleBack}', (midpointHips[0] - 30, midpointHips[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-        
         except Exception as e:
             if e == "'NoneType' object has no attribute 'landmark'":
                 pass
