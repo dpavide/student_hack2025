@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import asyncio
 
 # See AgentConfig model for full list of parameters to configure the agent
