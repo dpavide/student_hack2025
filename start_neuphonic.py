@@ -2,12 +2,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 import asyncio
+from dotenv import load_dotenv
 
 # See AgentConfig model for full list of parameters to configure the agent
 from pyneuphonic import Neuphonic, Agent, AgentConfig
 
+load_dotenv()
+
 async def main():
-    client = Neuphonic(api_key=os.environ.get('NEUPHONIC_API_KEY'))
+    client = Neuphonic(api_key=(os.getenv("NEUPHONIC_API_KEY")))
 
     agent_id = client.agents.create(
         name='Agent 1',
