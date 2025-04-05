@@ -1,6 +1,9 @@
 import mediapipe as mp
 import cv2
 import numpy as np
+import os
+from pyneuphonic import Neuphonic, TTSConfig
+from pyneuphonic.player import AudioPlayer
 
 # Set up for mediapipe
 mp_drawing = mp.solutions.drawing_utils
@@ -82,6 +85,8 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
 
             # --- Squat analysis check ---
 
+            Status=0
+
             # Check for knee inward collapse
             knee_valgus_threshold = 20  # Adjust based on testing
             knee_valgus_left = (kneeL[0] - ankleL[0]) > knee_valgus_threshold
@@ -90,6 +95,7 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
             # Back lean
             back_lean_threshold = 150  # Degrees (adjust based on testing)
             if angleBack < back_lean_threshold:
+                Status=1
                 cv2.putText(image, "Lean Forward Too Much!", (10, 90), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
@@ -98,15 +104,18 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
             depth_left = (hipL[1] > kneeL[1] * depth_threshold)
             depth_right = (hipR[1] > kneeR[1] * depth_threshold)
             if not (depth_left and depth_right):
+                Status=2
                 cv2.putText(image, "Go Lower!", (10, 120), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             
             # Heel lift
             heel_lift_threshold = 30  # Pixels (adjust based on testing)
             if abs(heelL[1] - footIndexL[1]) > heel_lift_threshold:
+                status=3
                 cv2.putText(image, "Left Heel Up!", (10, 150), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             if abs(heelR[1] - footIndexR[1]) > heel_lift_threshold:
+                status=4
                 cv2.putText(image, "Right Heel Up!", (10, 180), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
@@ -122,9 +131,11 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
             cv2.putText(image, f'{angleBack}', (midpointHips[0] - 30, midpointHips[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
             if knee_valgus_left:
+                status=5
                 cv2.putText(image, "Left Knee In!", (kneeL[0] - 50, kneeL[1]), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             if knee_valgus_right:
+                status=6
                 cv2.putText(image, "Right Knee In!", (kneeR[0] - 50, kneeR[1]), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
