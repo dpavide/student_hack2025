@@ -2,12 +2,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import WorkoutFeedback from './components/WorkoutFeedback';
+import TestWebcamFeedback from './components/TestWebcam';
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to My Fitness App</Text>
-      <WorkoutFeedback />
+      <TestWebcamFeedback />
     </View>
   );
 }
