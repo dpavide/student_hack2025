@@ -1,5 +1,6 @@
 import os
 import speech_recognition as sr
+import json
 from google import genai
 from dotenv import load_dotenv
 import asyncio
@@ -14,7 +15,13 @@ load_dotenv()
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 NEUPHONIC_API_KEY = os.environ.get("NEUPHONIC_API_KEY")
 
-SYSTEM_PROMPT = ""
+SYSTEM_PROMPT = """You are an expert fitness coach analyzing squat form data. Your task is to:
+1. Identify patterns in the form feedback data
+2. Highlight 2-3 key areas for improvement
+3. Recognize what the user did well
+4. Provide specific, actionable advice
+5. Maintain an encouraging, positive tone
+6. Be prepared to answer follow-up questions about the analysis"""
 
 # Initialize Google GenAI client
 genai_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -25,6 +32,20 @@ sse_client = neuphonic_client.tts.SSEClient()
 
 # Memory to store conversation history
 memory = ConversationBufferMemory(memory_key="chat_history")
+
+def load_squat_data():
+    """Load and parse the feedback log file"""
+    entries = []
+    try:
+        with open("temp.txt", "r") as f:
+            for line in f:
+                try:
+                    entries.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+        return entries
+    except FileNotFoundError:
+        return []
 
 def capture_audio():
     recognizer = sr.Recognizer()
@@ -47,13 +68,10 @@ def capture_audio():
 
 def gemini_chat(user_input):
     try:
-        # Get conversation history
         conversation_history = memory.load_memory_variables({})['chat_history']
         
-        # Build full prompt with system instruction
         full_prompt = f"{SYSTEM_PROMPT}\n\n{conversation_history}\nUser: {user_input}"
         
-        # Send to Gemini
         response = genai_client.models.generate_content(
             model="gemini-2.0-flash",
             contents=full_prompt
@@ -62,7 +80,7 @@ def gemini_chat(user_input):
         return response.text.strip()
     except Exception as e:
         print(f"Error in Gemini API call: {e}")
-        return "Sorry, I couldn't get a response. Please try again."
+        return "Sorry, I couldn't process that. Please try again."
 
 def generate_tts(response):
     tts_config = TTSConfig(
@@ -80,9 +98,20 @@ def generate_tts(response):
 async def chat_with_gemini():
     print("🤖 Gemini chatbot is live! Say 'exit' to end the conversation.")
     
-    # Initialize with system prompt
+    # Initialize system prompt
     memory.save_context({"input": "System"}, {"output": SYSTEM_PROMPT})
 
+    # Automatic squat analysis on startup
+    squat_data = load_squat_data()
+    if squat_data:
+        analysis_request = f"Analyze this squat form data: {json.dumps(squat_data)}. Provide detailed feedback and be ready for questions."
+        analysis_response = gemini_chat(analysis_request)
+        memory.save_context({"input": analysis_request}, {"output": analysis_response})
+        generate_tts(analysis_response)
+    else:
+        generate_tts("No squat data found. Complete a workout session first!")
+
+    # Conversation loop
     while True:
         user_input = capture_audio()
 
@@ -93,13 +122,8 @@ async def chat_with_gemini():
             print("Goodbye! Chat session ended.")
             break
 
-        # Get response
         response = gemini_chat(user_input)
-
-        # Save conversation
         memory.save_context({"input": user_input}, {"output": response})
-
-        # Generate TTS
         generate_tts(response)
 
 asyncio.run(chat_with_gemini())
