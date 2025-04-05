@@ -9,6 +9,17 @@ from pyneuphonic.player import AudioPlayer
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
+# Ensure the API key is set in your environment
+client = Neuphonic(api_key=os.environ.get('NEUPHONIC_API_KEY'))
+
+sse = client.tts.SSEClient()
+
+# TTSConfig is a pydantic model so check out the source code for all valid options
+tts_config = TTSConfig(
+    lang_code='en', # replace the lang_code with the desired language code.
+    sampling_rate=22050,
+)
+
 # --- Utility Functions ---
 def calculate_angle(a, b, c):
     a2d = np.array(a[:2])
@@ -146,6 +157,40 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
                 print("Error processing pose:", e)
         
         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+
+        #Voice feedback
+        if Status == 1:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Leaning Forward too much!", tts_config=tts_config)
+                player.play(response)
+            #se.play(tts_config, "Lean Forward Too Much!")
+        elif Status == 2:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Go Lower", tts_config=tts_config)
+                player.play(response)
+            #se.play(tts_config, "Go Lower!")
+        elif Status == 3:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Left Heel Up!", tts_config=tts_config)
+                player.play(response)
+            #sse.play(tts_config, "Left Heel Up!")
+        elif Status == 4:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Right Heel Up!", tts_config=tts_config)
+                player.play(response)
+            #sse.play(tts_config, "Right Heel Up!")
+        elif Status == 5:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Left Knee In!", tts_config=tts_config)
+                player.play(response)
+            sse.play(tts_config, "Left Knee In!")
+        elif Status == 6:
+            with AudioPlayer(sampling_rate=22050) as player:
+                response = sse.send("Right Knee In!", tts_config=tts_config)
+                player.play(response)
+            #sse.play(tts_config, "Right Knee In!")
+
 
         cv2.imshow("Body recognition", image)
         if cv2.waitKey(10) & 0xFF == ord("q"):
