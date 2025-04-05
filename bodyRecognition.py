@@ -18,7 +18,7 @@ def calculate_angle(a, b, c):
     return np.degrees(angle)
 
 def calculate_midpoint(a, b):
-    return (a+b)/2
+    return [(a[0] + b[0])/2, (a[1] + b[1])/2, (a[2] + b[2])/2]
 
 # --- Main loop for openCV ---
 cap = cv2.VideoCapture(0)
@@ -64,8 +64,6 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
             footIndexL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX])
             footIndexR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX])
 
-
-
             # Calculate elbow angles for each arm
             angleElbowL = int(calculate_angle(shoulderL, elbowL, wristL))
             angleElbowR = int(calculate_angle(shoulderR, elbowR, wristR))
@@ -82,6 +80,36 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
             # Calculate back angle
             angleBack = calculate_angle(midpointShoulder, midpointHips, midpointKnees)
 
+            # --- Squat analysis check ---
+
+            # Check for knee inward collapse
+            knee_valgus_threshold = 20  # Adjust based on testing
+            knee_valgus_left = (kneeL[0] - ankleL[0]) > knee_valgus_threshold
+            knee_valgus_right = (ankleR[0] - kneeR[0]) > knee_valgus_threshold
+
+            # Back lean
+            back_lean_threshold = 150  # Degrees (adjust based on testing)
+            if angleBack < back_lean_threshold:
+                cv2.putText(image, "Lean Forward Too Much!", (10, 90), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+            # Squat depth
+            depth_threshold = 0.9  # Hip below 90% of knee height
+            depth_left = (hipL[1] > kneeL[1] * depth_threshold)
+            depth_right = (hipR[1] > kneeR[1] * depth_threshold)
+            if not (depth_left and depth_right):
+                cv2.putText(image, "Go Lower!", (10, 120), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            
+            # Heel lift
+            heel_lift_threshold = 30  # Pixels (adjust based on testing)
+            if abs(heelL[1] - footIndexL[1]) > heel_lift_threshold:
+                cv2.putText(image, "Left Heel Up!", (10, 150), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            if abs(heelR[1] - footIndexR[1]) > heel_lift_threshold:
+                cv2.putText(image, "Right Heel Up!", (10, 180), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
             # --- Debug text ---
             cv2.putText(image, f'{angleElbowL}', (elbowL[0] - 30, elbowL[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
@@ -93,6 +121,12 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
             cv2.putText(image, f'{angleBack}', (midpointHips[0] - 30, midpointHips[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            if knee_valgus_left:
+                cv2.putText(image, "Left Knee In!", (kneeL[0] - 50, kneeL[1]), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            if knee_valgus_right:
+                cv2.putText(image, "Right Knee In!", (kneeR[0] - 50, kneeR[1]), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         except Exception as e:
             if e == "'NoneType' object has no attribute 'landmark'":
