@@ -14,6 +14,8 @@ load_dotenv()
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 NEUPHONIC_API_KEY = os.environ.get("NEUPHONIC_API_KEY")
 
+SYSTEM_PROMPT = ""
+
 # Initialize Google GenAI client
 genai_client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -24,7 +26,6 @@ sse_client = neuphonic_client.tts.SSEClient()
 # Memory to store conversation history
 memory = ConversationBufferMemory(memory_key="chat_history")
 
-# Function to capture audio and convert it to text using speech recognition
 def capture_audio():
     recognizer = sr.Recognizer()
     mic = sr.Microphone()
@@ -34,7 +35,6 @@ def capture_audio():
         audio = recognizer.listen(source)
 
     try:
-        # Convert speech to text
         text = recognizer.recognize_google(audio)
         print(f"You said: {text}")
         return text
@@ -45,66 +45,61 @@ def capture_audio():
         print(f"Could not request results from Google Speech Recognition service; {e}")
         return None
 
-# Function to interact with Gemini API
-def gemini_chat(input_text):
+def gemini_chat(user_input):
     try:
-
-        # Get response from Gemini API
+        # Get conversation history
+        conversation_history = memory.load_memory_variables({})['chat_history']
+        
+        # Build full prompt with system instruction
+        full_prompt = f"{SYSTEM_PROMPT}\n\n{conversation_history}\nUser: {user_input}"
+        
+        # Send to Gemini
         response = genai_client.models.generate_content(
-            model="gemini-2.0-flash",  # Specify model
-            contents=input_text  # Pass user input
+            model="gemini-2.0-flash",
+            contents=full_prompt
         )
         print(f"Gemini response: {response.text}")
         return response.text.strip()
     except Exception as e:
         print(f"Error in Gemini API call: {e}")
-        return "Sorry, I couldn't get a response from Gemini. Please try again later."
+        return "Sorry, I couldn't get a response. Please try again."
 
-# Function to generate TTS from Neuphonic
 def generate_tts(response):
     tts_config = TTSConfig(
-        lang_code='en',  # Set the language code
-        sampling_rate=22050  # Set the audio sampling rate
+        lang_code='en',
+        sampling_rate=22050
     )
 
     try:
         with AudioPlayer(sampling_rate=22050) as player:
-            # Generate the audio stream
             audio_stream = sse_client.send(response, tts_config=tts_config)
             player.play(audio_stream)
     except Exception as e:
         print(f"Error in speech synthesis: {e}")
 
-# Create the conversation chain with memory
 async def chat_with_gemini():
     print("🤖 Gemini chatbot is live! Say 'exit' to end the conversation.")
+    
+    # Initialize with system prompt
+    memory.save_context({"input": "System"}, {"output": SYSTEM_PROMPT})
 
     while True:
-        # Capture audio from the microphone
         user_input = capture_audio()
 
         if not user_input:
             continue
 
-        # If user wants to exit the chat
         if user_input.lower() == 'exit':
             print("Goodbye! Chat session ended.")
             break
 
-        # Add user input to memory
-        memory.save_context({"input": user_input}, {"output": ""})
+        # Get response
+        response = gemini_chat(user_input)
 
-        # Get the response from the Gemini model
-        conversation_context = memory.load_memory_variables({})['chat_history']
-        response = gemini_chat(conversation_context + "\n" + user_input)
-
-        # Save the response to memory
+        # Save conversation
         memory.save_context({"input": user_input}, {"output": response})
 
-        # Print Gemini's text response
-
-        # Generate TTS using Neuphonic
+        # Generate TTS
         generate_tts(response)
 
-# Run the chatbot
 asyncio.run(chat_with_gemini())
