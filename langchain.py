@@ -10,13 +10,13 @@ async def main():
 
     # Create a new voice AI agent with a short, helpful prompt
     agent_data = client.agents.create(
-        name='StudentHack Agent',
+        name='Squat assistant',
         prompt=(
-            "You are a helpful assistant. "
+            "You are a helpful gym training assistant. "
             "Answer clearly and conversationally. "
             "Keep track of the current session's chat history to maintain context."
         ),
-        greeting='Hey! Ready to chat about anything you want.'
+        greeting='Hey! Ready to workout with me?.'
     )
 
     agent_id = agent_data.data['agent_id']

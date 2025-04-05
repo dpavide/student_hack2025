@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import asyncio
 from dotenv import load_dotenv
-
+from pyneuphonic.player import AudioPlayer
 # See AgentConfig model for full list of parameters to configure the agent
 from pyneuphonic import Neuphonic, Agent, AgentConfig
 
