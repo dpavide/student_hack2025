@@ -17,6 +17,9 @@ def calculate_angle(a, b, c):
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
     return np.degrees(angle)
 
+def calculate_midpoint(a, b):
+    return [(a[0] + b[0])/2, (a[1] + b[1])/2, (a[2] + b[2])/2]
+
 # --- Main loop for openCV ---
 cap = cv2.VideoCapture(0)
 
@@ -41,27 +44,90 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
                         int(landmark.y * frame.shape[0]),
                         landmark.z]
             
-            # Left-side landmarks
+            # Arm landmarks
             shoulderL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER])
             elbowL    = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ELBOW])
             wristL    = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_WRIST])
-
-            # Right-side landmarks
             shoulderR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER])
             elbowR    = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW])
             wristR    = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_WRIST])
 
-            # Calculate elbow angles for each arm.
-            angleL = int(calculate_angle(shoulderL, elbowL, wristL))
-            angleR = int(calculate_angle(shoulderR, elbowR, wristR))
+            # Lower body landmarks
+            hipL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HIP])
+            hipR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HIP])
+            kneeL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_KNEE])
+            kneeR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_KNEE])
+            ankleL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE])
+            ankleR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE])
+            heelL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HEEL])
+            heelR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HEEL])
+            footIndexL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX])
+            footIndexR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX])
 
-            # Put text on screen for debug
-            cv2.putText(image, f'{angleL}', (elbowL[0] - 30, elbowL[1] - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(image, f'{angleR}', (elbowR[0] - 30, elbowR[1] - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            # Calculate elbow angles for each arm
+            angleElbowL = int(calculate_angle(shoulderL, elbowL, wristL))
+            angleElbowR = int(calculate_angle(shoulderR, elbowR, wristR))
 
-        
+            # Calculate knee angles for each leg,
+            angleKneeL = int(calculate_angle(hipL, kneeL, ankleL))
+            angleKneeR = int(calculate_angle(hipR, kneeR, ankleR))
+
+            # Find midpoints
+            midpointShoulder = calculate_midpoint(shoulderL, shoulderR)
+            midpointHips = calculate_midpoint(hipL, hipR)
+            midpointKnees = calculate_midpoint(kneeL, kneeR)
+
+            # Calculate back angle
+            angleBack = calculate_angle(midpointShoulder, midpointHips, midpointKnees)
+
+            # --- Squat analysis check ---
+
+            # Check for knee inward collapse
+            knee_valgus_threshold = 20  # Adjust based on testing
+            knee_valgus_left = (kneeL[0] - ankleL[0]) > knee_valgus_threshold
+            knee_valgus_right = (ankleR[0] - kneeR[0]) > knee_valgus_threshold
+
+            # Back lean
+            back_lean_threshold = 150  # Degrees (adjust based on testing)
+            if angleBack < back_lean_threshold:
+                cv2.putText(image, "Lean Forward Too Much!", (10, 90), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+            # Squat depth
+            depth_threshold = 0.9  # Hip below 90% of knee height
+            depth_left = (hipL[1] > kneeL[1] * depth_threshold)
+            depth_right = (hipR[1] > kneeR[1] * depth_threshold)
+            if not (depth_left and depth_right):
+                cv2.putText(image, "Go Lower!", (10, 120), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            
+            # Heel lift
+            heel_lift_threshold = 30  # Pixels (adjust based on testing)
+            if abs(heelL[1] - footIndexL[1]) > heel_lift_threshold:
+                cv2.putText(image, "Left Heel Up!", (10, 150), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            if abs(heelR[1] - footIndexR[1]) > heel_lift_threshold:
+                cv2.putText(image, "Right Heel Up!", (10, 180), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+            # --- Debug text ---
+            cv2.putText(image, f'{angleElbowL}', (elbowL[0] - 30, elbowL[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleElbowR}', (elbowR[0] - 30, elbowR[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleKneeL}', (kneeL[0] - 30, angleKneeL[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleKneeR}', (kneeR[0] - 30, kneeR[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, f'{angleBack}', (midpointHips[0] - 30, midpointHips[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            if knee_valgus_left:
+                cv2.putText(image, "Left Knee In!", (kneeL[0] - 50, kneeL[1]), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            if knee_valgus_right:
+                cv2.putText(image, "Right Knee In!", (kneeR[0] - 50, kneeR[1]), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
         except Exception as e:
             if e == "'NoneType' object has no attribute 'landmark'":
                 pass
