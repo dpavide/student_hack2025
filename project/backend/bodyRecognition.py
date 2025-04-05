@@ -4,6 +4,9 @@ import numpy as np
 import os
 from pyneuphonic import Neuphonic, TTSConfig
 from pyneuphonic.player import AudioPlayer
+import dotenv 
+
+dotenv.load_dotenv()
 
 # Set up for mediapipe
 mp_drawing = mp.solutions.drawing_utils
@@ -159,37 +162,37 @@ with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as 
         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
 
-        #Voice feedback
-        if Status == 1:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Leaning Forward too much!", tts_config=tts_config)
-                player.play(response)
-            #se.play(tts_config, "Lean Forward Too Much!")
-        elif Status == 2:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Go Lower", tts_config=tts_config)
-                player.play(response)
-            #se.play(tts_config, "Go Lower!")
-        elif Status == 3:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Left Heel Up!", tts_config=tts_config)
-                player.play(response)
-            #sse.play(tts_config, "Left Heel Up!")
-        elif Status == 4:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Right Heel Up!", tts_config=tts_config)
-                player.play(response)
-            #sse.play(tts_config, "Right Heel Up!")
-        elif Status == 5:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Left Knee In!", tts_config=tts_config)
-                player.play(response)
-            sse.play(tts_config, "Left Knee In!")
-        elif Status == 6:
-            with AudioPlayer(sampling_rate=22050) as player:
-                response = sse.send("Right Knee In!", tts_config=tts_config)
-                player.play(response)
-            #sse.play(tts_config, "Right Knee In!")
+        # #Voice feedback
+        # if Status == 1:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Leaning Forward too much!", tts_config=tts_config)
+        #         player.play(response)
+        #     #se.play(tts_config, "Lean Forward Too Much!")
+        # elif Status == 2:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Go Lower", tts_config=tts_config)
+        #         player.play(response)
+        #     #se.play(tts_config, "Go Lower!")
+        # elif Status == 3:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Left Heel Up!", tts_config=tts_config)
+        #         player.play(response)
+        #     #sse.play(tts_config, "Left Heel Up!")
+        # elif Status == 4:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Right Heel Up!", tts_config=tts_config)
+        #         player.play(response)
+        #     #sse.play(tts_config, "Right Heel Up!")
+        # elif Status == 5:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Left Knee In!", tts_config=tts_config)
+        #         player.play(response)
+        #     sse.play(tts_config, "Left Knee In!")
+        # elif Status == 6:
+        #     with AudioPlayer(sampling_rate=22050) as player:
+        #         response = sse.send("Right Knee In!", tts_config=tts_config)
+        #         player.play(response)
+        #     #sse.play(tts_config, "Right Knee In!")
 
 
         cv2.imshow("Body recognition", image)
