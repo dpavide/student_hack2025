@@ -50,7 +50,8 @@ def process_bicep_curl(frame, results, mp_pose, last_audio_time, audio_queue, bi
 
         # Bicep curl logic
         feedback_given = False
-        ELBOW_RANGE = {'down': 160, 'up': 60}
+        ELBOW_RANGE = {'down': 170, 'up': 30}
+        BACK_LEAN_THRESHOLD = 10  # Changed from 15 to 10 (more sensitive)
         
         if elbow_angle > ELBOW_RANGE['down']:
             bicep_phase = "down"
@@ -79,7 +80,7 @@ def process_bicep_curl(frame, results, mp_pose, last_audio_time, audio_queue, bi
                 feedback = "Lift Higher!"
                 feedback_given = True
 
-        if back_lean > 15:  # Same as BACK_LEAN_THRESHOLD
+        if back_lean > BACK_LEAN_THRESHOLD:  # Updated threshold
             if (current_time - last_audio_time) > AUDIO_COOLDOWN and not feedback_given:
                 audio_queue.put("Keep your back straight")
                 last_audio_time = current_time
