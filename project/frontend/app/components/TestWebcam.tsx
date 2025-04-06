@@ -56,6 +56,11 @@ const TestWebcamFeedback: React.FC = () => {
         <button onClick={() => setExercise('squat')} style={styles.button}>
           Squat
         </button>
+        <button 
+          onClick={() => setExercise('bicep')}
+          style={styles.button}>
+        Bicep Curls
+        </button>
       </div>
       <div style={styles.output}>
         <h3>Feedback: {feedback}</h3>

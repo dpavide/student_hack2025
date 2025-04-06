@@ -15,6 +15,7 @@ dotenv.load_dotenv()
 # Own file imports
 from squat_processor import process_squat
 from push_up_processor import process_pushup
+from bicep_curl_processor import process_bicep_curl
 
 app = Flask(__name__)
 CORS(app)
@@ -36,6 +37,7 @@ last_audio_time = 0
 AUDIO_COOLDOWN = 3
 perfect_form_flag = False
 pushup_phase = "down"  # Initialize pushup_phase for pushup analysis
+bicep_phase = "down"
 
 def audio_worker():
     while True:
@@ -55,7 +57,7 @@ audio_thread.start()
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    global last_audio_time, perfect_form_flag
+    global last_audio_time, perfect_form_flag, pushup_phase, bicep_phase
 
     data = request.get_json()
     if not data or 'image' not in data:
@@ -90,6 +92,20 @@ def analyze():
             feedback, processed_frame, pushup_phase, last_audio_time = process_pushup(
                 frame, results, mp_pose,
                 last_audio_time, audio_queue, pushup_phase, current_time,
+                AUDIO_COOLDOWN
+            )
+            _, buffer = cv2.imencode('.jpg', processed_frame)
+            return jsonify({
+                "feedback": feedback,
+                "annotated_image": f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
+            })
+        
+        elif current_exercise == "bicep":
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = pose.process(rgb_frame)
+            feedback, processed_frame, bicep_phase, last_audio_time = process_bicep_curl(
+                frame, results, mp_pose,
+                last_audio_time, audio_queue, bicep_phase, current_time,
                 AUDIO_COOLDOWN
             )
             _, buffer = cv2.imencode('.jpg', processed_frame)

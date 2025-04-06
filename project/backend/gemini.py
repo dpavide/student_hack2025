@@ -23,7 +23,7 @@ SYSTEM_PROMPT = """You are an expert fitness coach analyzing squat form data. Th
 5. Provide specific, actionable advice
 6. Maintain an encouraging, positive tone
 7. Be prepared to answer follow-up questions about the analysis
-8. Make sure the analysis isn't too long. Try keeping it to around 100 words. It should be 30-45 seconds to read out-loud"""
+8. Make sure the analysis isn't too long. Try keeping it to around 100 words. It should be 30-45 seconds to read out-loud. However, if you're asked for timestamps, allow for longer text output"""
 
 # Initialize Google GenAI client
 genai_client = genai.Client(api_key=GEMINI_API_KEY)
