@@ -35,6 +35,7 @@ audio_queue = queue.Queue()
 last_audio_time = 0
 AUDIO_COOLDOWN = 3
 perfect_form_flag = False
+pushup_phase = "down"  # Initialize pushup_phase for pushup analysis
 
 def audio_worker():
     while True:
@@ -83,6 +84,7 @@ def analyze():
             })
         
         elif current_exercise == "pushup":
+            global pushup_phase  # Declare as global so we can update it
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = pose.process(rgb_frame)
             feedback, processed_frame, pushup_phase, last_audio_time = process_pushup(
