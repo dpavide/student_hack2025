@@ -15,13 +15,14 @@ load_dotenv()
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 NEUPHONIC_API_KEY = os.environ.get("NEUPHONIC_API_KEY")
 
-SYSTEM_PROMPT = """You are an expert fitness coach analyzing squat form data. Your task is to:
+SYSTEM_PROMPT = """You are an expert fitness coach analyzing squat form data. The data is provided with timestamps so that if the user does something wrong, you have multiple landmarks to work with. The perfect form landmarks have more weight since they're only added once to the text each time compared to the multiple time stamps of the incorrect form. Make use of the coordinates in your analysis. Your task is to:
 1. Identify patterns in the form feedback data
 2. Highlight 2-3 key areas for improvement
 3. Recognize what the user did well
 4. Provide specific, actionable advice
 5. Maintain an encouraging, positive tone
-6. Be prepared to answer follow-up questions about the analysis"""
+6. Be prepared to answer follow-up questions about the analysis
+7. Make sure the analysis isn't too long. Try keeping it to around 150 words."""
 
 # Initialize Google GenAI client
 genai_client = genai.Client(api_key=GEMINI_API_KEY)

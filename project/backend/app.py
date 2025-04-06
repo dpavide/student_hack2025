@@ -11,15 +11,12 @@ from flask_cors import CORS
 import dotenv 
 
 dotenv.load_dotenv()
-
-# Import the squat processor module
 from squat_processor import process_squat
 
 app = Flask(__name__)
 CORS(app)
 
 # MediaPipe setup
-mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6)
 
@@ -71,30 +68,20 @@ def analyze():
         if current_exercise == "squat":
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = pose.process(rgb_frame)
-            # Call the modular squat processing function.
             feedback, processed_frame, perfect_form_flag, last_audio_time = process_squat(
-                frame, results, mp_pose, mp_drawing,
+                frame, results, mp_pose,
                 last_audio_time, audio_queue, perfect_form_flag, current_time,
                 AUDIO_COOLDOWN
             )
             _, buffer = cv2.imencode('.jpg', processed_frame)
-            annotated_image = f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
             return jsonify({
                 "feedback": feedback,
-                "annotated_image": annotated_image
+                "annotated_image": f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
             })
 
         elif current_exercise == "pushup":
-            # Dummy processing for pushup
-            feedback = "Dummy pushup analysis"
-            cv2.putText(frame, feedback, (10, 30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-            _, buffer = cv2.imencode('.jpg', frame)
-            annotated_image = f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
-            return jsonify({
-                "feedback": feedback,
-                "annotated_image": annotated_image
-            })
+            # Dummy processing remains same
+            return jsonify({"feedback": "Dummy pushup analysis", "annotated_image": ""})
 
         else:
             return jsonify({"error": "Unknown exercise type"}), 400
