@@ -1,0 +1,154 @@
+{"timestamp": "2025-04-06T06:18:29.702968", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 15.080595016479492, "shoulder_position": [573.4757232666016, 353.90064239501953, -0.43336695432662964], "hip_position": [476.9599151611328, 822.5812339782715, -0.06116906926035881]}}
+{"timestamp": "2025-04-06T06:18:32.710506", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 15.410047769546509, "shoulder_position": [562.7909469604492, 348.51436614990234, -0.3311326801776886], "hip_position": [464.16664123535156, 817.9605674743652, -0.04791710153222084]}}
+{"timestamp": "2025-04-06T06:18:57.092721", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 15.281879901885986, "shoulder_position": [577.5627899169922, 388.11527252197266, -1.0914853811264038], "hip_position": [479.7587585449219, 823.084716796875, -0.12086600065231323]}}
+{"timestamp": "2025-04-06T06:19:00.109374", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 15.008509159088135, "shoulder_position": [551.4438629150391, 379.2161464691162, -0.4148528575897217], "hip_position": [455.389404296875, 828.0124282836914, -0.05026846379041672]}}
+{"timestamp": "2025-04-06T06:19:05.806849", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 16.528278589248657, "shoulder_position": [555.3152465820312, 227.29793071746826, -1.4376603364944458], "hip_position": [449.53426361083984, 709.8282623291016, -0.12168566882610321]}}
+{"timestamp": "2025-04-06T06:19:09.603130", "feedback": "rep_completed", "coordinates": {"elbow_angle": 19, "joints": {"shoulder": [480.98567962646484, 241.67372703552246, -0.3502745032310486], "elbow": [556.5708160400391, 425.3664207458496, -0.7509293556213379], "wrist": [407.27108001708984, 258.00341606140137, -1.1733332872390747]}}}
+{"timestamp": "2025-04-06T06:19:09.603367", "feedback": "good_form", "coordinates": {"elbow_angle": 19, "back_lean": 5.608260631561279}}
+{"timestamp": "2025-04-06T06:19:09.692782", "feedback": "good_form", "coordinates": {"elbow_angle": 21, "back_lean": 5.024325847625732}}
+{"timestamp": "2025-04-06T06:19:09.792225", "feedback": "good_form", "coordinates": {"elbow_angle": 21, "back_lean": 4.81569766998291}}
+{"timestamp": "2025-04-06T06:19:09.896250", "feedback": "good_form", "coordinates": {"elbow_angle": 22, "back_lean": 4.876947402954102}}
+{"timestamp": "2025-04-06T06:19:10.006406", "feedback": "good_form", "coordinates": {"elbow_angle": 24, "back_lean": 5.0703465938568115}}
+{"timestamp": "2025-04-06T06:19:10.091407", "feedback": "good_form", "coordinates": {"elbow_angle": 30, "back_lean": 5.361306667327881}}
+{"timestamp": "2025-04-06T06:19:10.193103", "feedback": "good_form", "coordinates": {"elbow_angle": 38, "back_lean": 5.786854028701782}}
+{"timestamp": "2025-04-06T06:19:10.291060", "feedback": "good_form", "coordinates": {"elbow_angle": 41, "back_lean": 5.453777313232422}}
+{"timestamp": "2025-04-06T06:19:10.390809", "feedback": "good_form", "coordinates": {"elbow_angle": 42, "back_lean": 4.867219924926758}}
+{"timestamp": "2025-04-06T06:19:10.491228", "feedback": "good_form", "coordinates": {"elbow_angle": 42, "back_lean": 3.262484073638916}}
+{"timestamp": "2025-04-06T06:19:10.593794", "feedback": "good_form", "coordinates": {"elbow_angle": 41, "back_lean": 3.8915634155273438}}
+{"timestamp": "2025-04-06T06:19:10.690384", "feedback": "good_form", "coordinates": {"elbow_angle": 40, "back_lean": 5.214965343475342}}
+{"timestamp": "2025-04-06T06:19:10.794255", "feedback": "good_form", "coordinates": {"elbow_angle": 50, "back_lean": 5.989152193069458}}
+{"timestamp": "2025-04-06T06:19:10.894301", "feedback": "good_form", "coordinates": {"elbow_angle": 50, "back_lean": 6.529545783996582}}
+{"timestamp": "2025-04-06T06:19:11.090471", "feedback": "rep_completed", "coordinates": {"elbow_angle": 34, "joints": {"shoulder": [523.2299041748047, 229.74095821380615, -0.7152894735336304], "elbow": [545.0031280517578, 414.7533988952637, -1.375602126121521], "wrist": [411.88621520996094, 265.2033519744873, -1.8243573904037476]}}}
+{"timestamp": "2025-04-06T06:19:11.090722", "feedback": "good_form", "coordinates": {"elbow_angle": 34, "back_lean": 6.203174591064453}}
+{"timestamp": "2025-04-06T06:19:11.190800", "feedback": "good_form", "coordinates": {"elbow_angle": 43, "back_lean": 6.198394298553467}}
+{"timestamp": "2025-04-06T06:19:11.390468", "feedback": "rep_completed", "coordinates": {"elbow_angle": 30, "joints": {"shoulder": [536.5291595458984, 247.41182327270508, -0.5339282751083374], "elbow": [521.8050384521484, 436.8321704864502, -1.0241667032241821], "wrist": [418.2537078857422, 227.00160026550293, -1.5421407222747803]}}}
+{"timestamp": "2025-04-06T06:19:11.390724", "feedback": "good_form", "coordinates": {"elbow_angle": 30, "back_lean": 5.7501137256622314}}
+{"timestamp": "2025-04-06T06:19:11.490145", "feedback": "good_form", "coordinates": {"elbow_angle": 36, "back_lean": 6.83397650718689}}
+{"timestamp": "2025-04-06T06:19:11.596620", "feedback": "good_form", "coordinates": {"elbow_angle": 68, "back_lean": 8.568787574768066}}
+{"timestamp": "2025-04-06T06:19:11.704134", "feedback": "good_form", "coordinates": {"elbow_angle": 65, "back_lean": 8.339011669158936}}
+{"timestamp": "2025-04-06T06:19:13.491526", "feedback": "back_lean", "coordinates": {"shoulder_hip_diff": 15.14509916305542, "shoulder_position": [540.7684326171875, 251.69217109680176, -0.4695553779602051], "hip_position": [443.8397979736328, 678.5479545593262, 0.0002568333875387907]}}
+{"timestamp": "2025-04-06T07:19:42.853885", "feedback": "rep_completed", "coordinates": {"elbow_angle": 9, "joints": {"shoulder": [408.51409912109375, 119.30920600891113, -0.09237419813871384], "elbow": [447.2066879272461, 267.1890163421631, -0.4198884069919586], "wrist": [415.31970977783203, 195.10276794433594, -0.9093313217163086]}}}
+{"timestamp": "2025-04-06T07:19:42.855659", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 3.653287887573242}}
+{"timestamp": "2025-04-06T07:19:42.937066", "feedback": "good_form", "coordinates": {"elbow_angle": 7, "back_lean": 3.6079883575439453}}
+{"timestamp": "2025-04-06T07:19:43.019667", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 3.575962781906128}}
+{"timestamp": "2025-04-06T07:19:43.118618", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 3.690826892852783}}
+{"timestamp": "2025-04-06T07:19:43.218261", "feedback": "good_form", "coordinates": {"elbow_angle": 10, "back_lean": 4.317128658294678}}
+{"timestamp": "2025-04-06T07:19:43.319637", "feedback": "good_form", "coordinates": {"elbow_angle": 13, "back_lean": 5.599921941757202}}
+{"timestamp": "2025-04-06T07:19:43.419191", "feedback": "good_form", "coordinates": {"elbow_angle": 16, "back_lean": 5.612123012542725}}
+{"timestamp": "2025-04-06T07:19:43.520495", "feedback": "good_form", "coordinates": {"elbow_angle": 20, "back_lean": 5.9245288372039795}}
+{"timestamp": "2025-04-06T07:19:43.625870", "feedback": "good_form", "coordinates": {"elbow_angle": 16, "back_lean": 5.712926387786865}}
+{"timestamp": "2025-04-06T07:19:43.720010", "feedback": "good_form", "coordinates": {"elbow_angle": 15, "back_lean": 5.293583869934082}}
+{"timestamp": "2025-04-06T07:19:43.819408", "feedback": "good_form", "coordinates": {"elbow_angle": 46, "back_lean": 5.388253927230835}}
+{"timestamp": "2025-04-06T07:19:43.920330", "feedback": "lift_higher", "coordinates": {"elbow_angle": 138, "elbow_position": [470.3115463256836, 280.2389144897461, -0.23452487587928772], "wrist_position": [450.60707092285156, 318.4580612182617, -0.7727628350257874]}}
+{"timestamp": "2025-04-06T07:19:45.218609", "feedback": "rep_completed", "coordinates": {"elbow_angle": 17, "joints": {"shoulder": [422.2383117675781, 142.72594928741455, -0.0413571298122406], "elbow": [457.52574920654297, 264.34146881103516, -0.2992909550666809], "wrist": [450.4579544067383, 253.73099327087402, -0.8823563456535339]}}}
+{"timestamp": "2025-04-06T07:19:45.218835", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 4.623520374298096}}
+{"timestamp": "2025-04-06T07:19:45.320467", "feedback": "good_form", "coordinates": {"elbow_angle": 10, "back_lean": 4.304856061935425}}
+{"timestamp": "2025-04-06T07:19:45.422852", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 4.081434011459351}}
+{"timestamp": "2025-04-06T07:19:45.518470", "feedback": "good_form", "coordinates": {"elbow_angle": 7, "back_lean": 4.078519344329834}}
+{"timestamp": "2025-04-06T07:19:45.620963", "feedback": "good_form", "coordinates": {"elbow_angle": 4, "back_lean": 4.009544849395752}}
+{"timestamp": "2025-04-06T07:19:45.719366", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.002141952514648}}
+{"timestamp": "2025-04-06T07:19:45.819054", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.973764181137085}}
+{"timestamp": "2025-04-06T07:19:45.923455", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.966653347015381}}
+{"timestamp": "2025-04-06T07:19:46.017691", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.9119064807891846}}
+{"timestamp": "2025-04-06T07:19:46.121166", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.889477252960205}}
+{"timestamp": "2025-04-06T07:19:46.220947", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.837740421295166}}
+{"timestamp": "2025-04-06T07:19:46.320746", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.814798593521118}}
+{"timestamp": "2025-04-06T07:19:46.419035", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.754335641860962}}
+{"timestamp": "2025-04-06T07:19:46.518833", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.7041842937469482}}
+{"timestamp": "2025-04-06T07:19:46.618982", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.6983072757720947}}
+{"timestamp": "2025-04-06T07:19:46.719109", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.699159622192383}}
+{"timestamp": "2025-04-06T07:19:46.818287", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.6946117877960205}}
+{"timestamp": "2025-04-06T07:19:46.923951", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.6854982376098633}}
+{"timestamp": "2025-04-06T07:19:47.018434", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.665280342102051}}
+{"timestamp": "2025-04-06T07:19:47.120777", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.668391704559326}}
+{"timestamp": "2025-04-06T07:19:47.217930", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.666311502456665}}
+{"timestamp": "2025-04-06T07:19:47.329849", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.6734580993652344}}
+{"timestamp": "2025-04-06T07:19:47.432287", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.6661863327026367}}
+{"timestamp": "2025-04-06T07:19:47.518442", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.665214776992798}}
+{"timestamp": "2025-04-06T07:19:47.617908", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 3.666996955871582}}
+{"timestamp": "2025-04-06T07:19:47.718834", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.6727428436279297}}
+{"timestamp": "2025-04-06T07:19:47.818757", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 3.6741554737091064}}
+{"timestamp": "2025-04-06T07:19:47.919963", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 3.6847710609436035}}
+{"timestamp": "2025-04-06T07:19:48.018263", "feedback": "good_form", "coordinates": {"elbow_angle": 10, "back_lean": 3.7320196628570557}}
+{"timestamp": "2025-04-06T07:19:48.119588", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 3.7545740604400635}}
+{"timestamp": "2025-04-06T07:19:48.218866", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.7269771099090576}}
+{"timestamp": "2025-04-06T07:19:48.318742", "feedback": "good_form", "coordinates": {"elbow_angle": 16, "back_lean": 3.7411272525787354}}
+{"timestamp": "2025-04-06T07:19:48.418225", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 3.77618670463562}}
+{"timestamp": "2025-04-06T07:19:48.519861", "feedback": "good_form", "coordinates": {"elbow_angle": 16, "back_lean": 3.7679314613342285}}
+{"timestamp": "2025-04-06T07:19:48.618137", "feedback": "good_form", "coordinates": {"elbow_angle": 15, "back_lean": 3.7748098373413086}}
+{"timestamp": "2025-04-06T07:19:48.718470", "feedback": "good_form", "coordinates": {"elbow_angle": 15, "back_lean": 3.7836968898773193}}
+{"timestamp": "2025-04-06T07:19:48.820626", "feedback": "good_form", "coordinates": {"elbow_angle": 15, "back_lean": 3.7864387035369873}}
+{"timestamp": "2025-04-06T07:19:48.920268", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.7949442863464355}}
+{"timestamp": "2025-04-06T07:19:49.018400", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.8037478923797607}}
+{"timestamp": "2025-04-06T07:19:49.120610", "feedback": "good_form", "coordinates": {"elbow_angle": 13, "back_lean": 3.8244426250457764}}
+{"timestamp": "2025-04-06T07:19:49.218324", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.8319647312164307}}
+{"timestamp": "2025-04-06T07:19:49.321052", "feedback": "good_form", "coordinates": {"elbow_angle": 13, "back_lean": 3.8667142391204834}}
+{"timestamp": "2025-04-06T07:19:49.419033", "feedback": "good_form", "coordinates": {"elbow_angle": 13, "back_lean": 3.866291046142578}}
+{"timestamp": "2025-04-06T07:19:49.532208", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.8696587085723877}}
+{"timestamp": "2025-04-06T07:19:49.633651", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.8901329040527344}}
+{"timestamp": "2025-04-06T07:19:49.734720", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.9214134216308594}}
+{"timestamp": "2025-04-06T07:19:49.832799", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.920227289199829}}
+{"timestamp": "2025-04-06T07:19:49.934568", "feedback": "good_form", "coordinates": {"elbow_angle": 13, "back_lean": 3.9107978343963623}}
+{"timestamp": "2025-04-06T07:19:50.030011", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 3.910773992538452}}
+{"timestamp": "2025-04-06T07:19:50.129127", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 3.9315342903137207}}
+{"timestamp": "2025-04-06T07:19:50.232086", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 3.940504789352417}}
+{"timestamp": "2025-04-06T07:19:50.332058", "feedback": "good_form", "coordinates": {"elbow_angle": 10, "back_lean": 3.953230381011963}}
+{"timestamp": "2025-04-06T07:19:50.430318", "feedback": "good_form", "coordinates": {"elbow_angle": 8, "back_lean": 4.0342628955841064}}
+{"timestamp": "2025-04-06T07:19:50.529965", "feedback": "good_form", "coordinates": {"elbow_angle": 7, "back_lean": 4.146319627761841}}
+{"timestamp": "2025-04-06T07:19:50.631778", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 4.258131980895996}}
+{"timestamp": "2025-04-06T07:19:50.732204", "feedback": "good_form", "coordinates": {"elbow_angle": 7, "back_lean": 4.336261749267578}}
+{"timestamp": "2025-04-06T07:19:50.832237", "feedback": "good_form", "coordinates": {"elbow_angle": 19, "back_lean": 4.220080375671387}}
+{"timestamp": "2025-04-06T07:19:50.934256", "feedback": "good_form", "coordinates": {"elbow_angle": 76, "back_lean": 4.313671588897705}}
+{"timestamp": "2025-04-06T07:19:52.618290", "feedback": "rep_completed", "coordinates": {"elbow_angle": 47, "joints": {"shoulder": [424.80072021484375, 139.02653217315674, -0.02286178059875965], "elbow": [457.75962829589844, 264.6928310394287, -0.3666040897369385], "wrist": [487.88780212402344, 217.16772079467773, -0.9146198034286499]}}}
+{"timestamp": "2025-04-06T07:19:52.618528", "feedback": "good_form", "coordinates": {"elbow_angle": 47, "back_lean": 4.969453811645508}}
+{"timestamp": "2025-04-06T07:19:52.720419", "feedback": "good_form", "coordinates": {"elbow_angle": 28, "back_lean": 4.831886291503906}}
+{"timestamp": "2025-04-06T07:19:52.820008", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 4.68209981918335}}
+{"timestamp": "2025-04-06T07:19:52.919448", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 4.507291316986084}}
+{"timestamp": "2025-04-06T07:19:53.046441", "feedback": "good_form", "coordinates": {"elbow_angle": 7, "back_lean": 4.397493600845337}}
+{"timestamp": "2025-04-06T07:19:53.122449", "feedback": "good_form", "coordinates": {"elbow_angle": 4, "back_lean": 4.340934753417969}}
+{"timestamp": "2025-04-06T07:19:53.218277", "feedback": "good_form", "coordinates": {"elbow_angle": 3, "back_lean": 4.318404197692871}}
+{"timestamp": "2025-04-06T07:19:53.317351", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 4.344826936721802}}
+{"timestamp": "2025-04-06T07:19:53.419872", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 4.358357191085815}}
+{"timestamp": "2025-04-06T07:19:53.518211", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.303741455078125}}
+{"timestamp": "2025-04-06T07:19:53.619606", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.3032050132751465}}
+{"timestamp": "2025-04-06T07:19:53.717731", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.309654235839844}}
+{"timestamp": "2025-04-06T07:19:53.819983", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.310315847396851}}
+{"timestamp": "2025-04-06T07:19:53.917637", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.322737455368042}}
+{"timestamp": "2025-04-06T07:19:54.016789", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.403871297836304}}
+{"timestamp": "2025-04-06T07:19:54.117831", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.425358772277832}}
+{"timestamp": "2025-04-06T07:19:54.221721", "feedback": "good_form", "coordinates": {"elbow_angle": 2, "back_lean": 4.4313013553619385}}
+{"timestamp": "2025-04-06T07:19:54.335329", "feedback": "good_form", "coordinates": {"elbow_angle": 4, "back_lean": 4.504859447479248}}
+{"timestamp": "2025-04-06T07:19:54.449502", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 4.4124603271484375}}
+{"timestamp": "2025-04-06T07:19:54.524029", "feedback": "good_form", "coordinates": {"elbow_angle": 28, "back_lean": 4.3306052684783936}}
+{"timestamp": "2025-04-06T07:19:54.636100", "feedback": "good_form", "coordinates": {"elbow_angle": 57, "back_lean": 4.331415891647339}}
+{"timestamp": "2025-04-06T07:19:54.724144", "feedback": "lift_higher", "coordinates": {"elbow_angle": 135, "elbow_position": [456.5097427368164, 264.66856956481934, -0.25077399611473083], "wrist_position": [481.7462921142578, 280.2560806274414, -0.856725811958313]}}
+{"timestamp": "2025-04-06T07:19:55.817933", "feedback": "rep_completed", "coordinates": {"elbow_angle": 50, "joints": {"shoulder": [426.8961715698242, 140.38790702819824, -0.07422471791505814], "elbow": [458.4031677246094, 267.9942798614502, -0.365226686000824], "wrist": [483.98590087890625, 233.81278038024902, -0.9489759206771851]}}}
+{"timestamp": "2025-04-06T07:19:55.818172", "feedback": "good_form", "coordinates": {"elbow_angle": 50, "back_lean": 5.143612623214722}}
+{"timestamp": "2025-04-06T07:19:55.924112", "feedback": "good_form", "coordinates": {"elbow_angle": 31, "back_lean": 5.036354064941406}}
+{"timestamp": "2025-04-06T07:19:56.024695", "feedback": "good_form", "coordinates": {"elbow_angle": 23, "back_lean": 4.744958877563477}}
+{"timestamp": "2025-04-06T07:19:56.134053", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 4.502427577972412}}
+{"timestamp": "2025-04-06T07:19:56.218499", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 4.402822256088257}}
+{"timestamp": "2025-04-06T07:19:56.316471", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 4.42429780960083}}
+{"timestamp": "2025-04-06T07:19:56.417684", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 4.381471872329712}}
+{"timestamp": "2025-04-06T07:19:56.517208", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 4.366582632064819}}
+{"timestamp": "2025-04-06T07:19:56.617128", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 4.346001148223877}}
+{"timestamp": "2025-04-06T07:19:56.718241", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 4.378044605255127}}
+{"timestamp": "2025-04-06T07:19:56.817177", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 4.394882917404175}}
+{"timestamp": "2025-04-06T07:19:56.917251", "feedback": "good_form", "coordinates": {"elbow_angle": 60, "back_lean": 4.456418752670288}}
+{"timestamp": "2025-04-06T07:19:57.320200", "feedback": "rep_completed", "coordinates": {"elbow_angle": 53, "joints": {"shoulder": [427.1099090576172, 143.28894138336182, -0.0875568836927414], "elbow": [458.8381576538086, 264.5005702972412, -0.4017374515533447], "wrist": [474.7315216064453, 244.81890678405762, -0.9401082992553711]}}}
+{"timestamp": "2025-04-06T07:19:57.320435", "feedback": "good_form", "coordinates": {"elbow_angle": 53, "back_lean": 5.246418714523315}}
+{"timestamp": "2025-04-06T07:19:57.418586", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 5.188935995101929}}
+{"timestamp": "2025-04-06T07:19:57.519936", "feedback": "good_form", "coordinates": {"elbow_angle": 12, "back_lean": 5.108737945556641}}
+{"timestamp": "2025-04-06T07:19:57.618546", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 5.05109429359436}}
+{"timestamp": "2025-04-06T07:19:57.718785", "feedback": "good_form", "coordinates": {"elbow_angle": 19, "back_lean": 4.804700613021851}}
+{"timestamp": "2025-04-06T07:19:57.818577", "feedback": "good_form", "coordinates": {"elbow_angle": 0, "back_lean": 4.771745204925537}}
+{"timestamp": "2025-04-06T07:19:57.919760", "feedback": "good_form", "coordinates": {"elbow_angle": 3, "back_lean": 4.53181266784668}}
+{"timestamp": "2025-04-06T07:19:58.017772", "feedback": "good_form", "coordinates": {"elbow_angle": 1, "back_lean": 4.456132650375366}}
+{"timestamp": "2025-04-06T07:19:58.121902", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 4.383134841918945}}
+{"timestamp": "2025-04-06T07:19:58.232611", "feedback": "good_form", "coordinates": {"elbow_angle": 11, "back_lean": 3.7813186645507812}}
+{"timestamp": "2025-04-06T07:19:58.319925", "feedback": "good_form", "coordinates": {"elbow_angle": 10, "back_lean": 3.825974464416504}}
+{"timestamp": "2025-04-06T07:19:58.417863", "feedback": "good_form", "coordinates": {"elbow_angle": 15, "back_lean": 3.8893938064575195}}
+{"timestamp": "2025-04-06T07:19:58.520255", "feedback": "good_form", "coordinates": {"elbow_angle": 9, "back_lean": 3.9420127868652344}}
+{"timestamp": "2025-04-06T07:19:58.617046", "feedback": "good_form", "coordinates": {"elbow_angle": 17, "back_lean": 3.340989351272583}}
+{"timestamp": "2025-04-06T07:19:58.720024", "feedback": "good_form", "coordinates": {"elbow_angle": 14, "back_lean": 3.356337547302246}}
+{"timestamp": "2025-04-06T07:19:58.818341", "feedback": "good_form", "coordinates": {"elbow_angle": 22, "back_lean": 3.5835981369018555}}

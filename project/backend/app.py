@@ -9,6 +9,7 @@ import queue
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import dotenv 
+from datetime import datetime
 
 dotenv.load_dotenv()
 
@@ -19,6 +20,9 @@ from bicep_curl_processor import process_bicep_curl
 
 app = Flask(__name__)
 CORS(app)
+
+# Global variable to hold latest landmark data for AR overlay
+latest_landmark_data = None
 
 # MediaPipe setup
 mp_pose = mp.solutions.pose
@@ -55,9 +59,16 @@ def audio_worker():
 audio_thread = threading.Thread(target=audio_worker, daemon=True)
 audio_thread.start()
 
+@app.route('/latest-landmarks', methods=['GET'])
+def latest_landmarks():
+    if latest_landmark_data:
+        return jsonify(latest_landmark_data), 200
+    else:
+        return jsonify({"error": "No landmark data available"}), 404
+
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    global last_audio_time, perfect_form_flag, pushup_phase, bicep_phase
+    global latest_landmark_data, last_audio_time, perfect_form_flag, pushup_phase, bicep_phase
 
     data = request.get_json()
     if not data or 'image' not in data:
@@ -71,6 +82,21 @@ def analyze():
         frame = cv2.imdecode(np.frombuffer(base64.b64decode(image_data_str), np.uint8), cv2.IMREAD_COLOR)
         current_time = time.time()
 
+        # Helper function to extract landmark coordinates in normalized [0,1] space.
+        def extract_landmarks(frame, results, mp_pose):
+            if not results.pose_landmarks:
+                return {"shoulders": [], "hips": [], "knees": []}
+            landmarks = results.pose_landmarks.landmark
+            def get_point(landmark):
+                return [landmark.x, landmark.y, landmark.z]
+            shoulders = [get_point(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER]),
+                         get_point(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER])]
+            hips = [get_point(landmarks[mp_pose.PoseLandmark.LEFT_HIP]),
+                    get_point(landmarks[mp_pose.PoseLandmark.RIGHT_HIP])]
+            knees = [get_point(landmarks[mp_pose.PoseLandmark.LEFT_KNEE]),
+                     get_point(landmarks[mp_pose.PoseLandmark.RIGHT_KNEE])]
+            return {"shoulders": shoulders, "hips": hips, "knees": knees}
+
         if current_exercise == "squat":
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = pose.process(rgb_frame)
@@ -79,6 +105,32 @@ def analyze():
                 last_audio_time, audio_queue, perfect_form_flag, current_time,
                 AUDIO_COOLDOWN
             )
+            # Extract landmarks for AR overlay
+            if results.pose_landmarks:
+                landmarks = results.pose_landmarks.landmark
+                # Extract some landmarks – adjust indices and scaling as needed.
+                shoulders = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].z}
+                ]
+                hips = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_HIP].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].z}
+                ]
+                knees = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].z}
+                ]
+                latest_landmark_data = {
+                    "timestamp": datetime.now().isoformat(),
+                    "feedback": feedback,
+                    "coordinates": {
+                        "shoulders": shoulders,
+                        "hips": hips,
+                        "knees": knees
+                    }
+                }
+
             _, buffer = cv2.imencode('.jpg', processed_frame)
             return jsonify({
                 "feedback": feedback,
@@ -94,6 +146,33 @@ def analyze():
                 last_audio_time, audio_queue, pushup_phase, current_time,
                 AUDIO_COOLDOWN
             )
+            # Optionally update latest_landmark_data with pushup landmarks
+            
+            if results.pose_landmarks:
+                landmarks = results.pose_landmarks.landmark
+                # Extract some landmarks – adjust indices and scaling as needed.
+                shoulders = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].z}
+                ]
+                hips = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_HIP].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].z}
+                ]
+                knees = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].z}
+                ]
+                latest_landmark_data = {
+                    "timestamp": datetime.now().isoformat(),
+                    "feedback": feedback,
+                    "coordinates": {
+                        "shoulders": shoulders,
+                        "hips": hips,
+                        "knees": knees
+                    }
+                }
+
             _, buffer = cv2.imencode('.jpg', processed_frame)
             return jsonify({
                 "feedback": feedback,
@@ -108,6 +187,32 @@ def analyze():
                 last_audio_time, audio_queue, bicep_phase, current_time,
                 AUDIO_COOLDOWN
             )
+            # Update landmark data for AR if needed
+            if results.pose_landmarks:
+                landmarks = results.pose_landmarks.landmark
+                # Extract some landmarks – adjust indices and scaling as needed.
+                shoulders = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].z}
+                ]
+                hips = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_HIP].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_HIP].z}
+                ]
+                knees = [
+                {"x": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.LEFT_KNEE].z},
+                {"x": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].x, "y": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].y, "z": landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].z}
+                ]
+                latest_landmark_data = {
+                    "timestamp": datetime.now().isoformat(),
+                    "feedback": feedback,
+                    "coordinates": {
+                        "shoulders": shoulders,
+                        "hips": hips,
+                        "knees": knees
+                    }
+                }
+
             _, buffer = cv2.imencode('.jpg', processed_frame)
             return jsonify({
                 "feedback": feedback,

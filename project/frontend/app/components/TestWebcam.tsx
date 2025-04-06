@@ -2,26 +2,27 @@ import React, { useRef, useState, useEffect } from 'react';
 import ReactWebcam from 'react-webcam';
 import axios from 'axios';
 
-const TestWebcamFeedback: React.FC = () => {
+const TestWebcamFeedback: React.FC<{ presetExercise?: string }> = ({ presetExercise }) => {
+  // Initialize with preset exercise if provided
+  const [exercise, setExercise] = useState<string>(presetExercise || '');
   const webcamRef = useRef<ReactWebcam>(null);
   const [feedback, setFeedback] = useState<string>('');
   const [annotatedImage, setAnnotatedImage] = useState<string>('');
-  const [exercise, setExercise] = useState<string>(''); // "pushup" or "squat"
+  const [isStopped, setIsStopped] = useState<boolean>(false);
 
   // Function to capture a frame and send it to the backend
   const analyzeFrame = async () => {
+    if (isStopped) return;
     const imageData = webcamRef.current?.getScreenshot();
     if (!imageData) {
       setFeedback('Could not capture image.');
       return;
     }
-
     try {
       const response = await axios.post('http://127.0.0.1:5000/analyze', {
         image: imageData,
-        exercise: exercise, // sending exercise type along with image
+        exercise: exercise,
       });
-      // Assuming your backend returns a JSON with "feedback" and "annotated_image"
       const { feedback, annotated_image } = response.data;
       setFeedback(feedback);
       setAnnotatedImage(annotated_image);
@@ -31,197 +32,243 @@ const TestWebcamFeedback: React.FC = () => {
     }
   };
 
-  // Set up a timer to continuously analyze frames (e.g., every 100ms)
+  // Set up a timer to continuously analyze frames every second
   useEffect(() => {
+    if (isStopped) return;
     const interval = setInterval(() => {
       analyzeFrame();
     }, 100);
     return () => clearInterval(interval);
-  }, [exercise]); // re-run if exercise state changes
+  }, [exercise, isStopped]);
 
-return (
-  <div style={styles.container}>
-    {/* Header Section */}
-    <header style={styles.header}>
-      <h1 style={styles.logo}>AI Gym Bro</h1>
-    </header>
+  // Stop handler: calls endpoints to shutdown app.py and start Gemini, then stops the webcam
+  const handleStop = async () => {
+    try {
+      await axios.post('http://127.0.0.1:5000/start-gemini');
+      setTimeout(async () => {
+        await axios.post('http://127.0.0.1:5000/shutdown');
+      }, 3000);
+      if (webcamRef.current) {
+        const stream = webcamRef.current.video?.srcObject;
+        if (stream) {
+          const tracks = (stream as MediaStream).getTracks();
+          tracks.forEach(track => track.stop());
+        }
+      }
+      setIsStopped(true);
+      setFeedback("Switched to AI mode - Camera stopped");
+    } catch (error) {
+      console.error('Shutdown failed:', error);
+      setFeedback("Error switching to AI mode");
+    }
+  };
 
-    {/* Main Content */}
-    <main style={styles.mainContent}>
-      
-      
-      <div style={styles.webcamSection}>
-        <ReactWebcam
-          ref={webcamRef}
-          audio={false}
-          screenshotFormat="image/jpeg"
-          videoConstraints={{ facingMode: 'user' }}
-          style={styles.webcam}
-        />
-        
-        <div style={styles.controls}>
-          <div style={styles.buttonContainer}>
-            <button 
-              onClick={() => setExercise('pushup')} 
-              style={{...styles.button, ...(exercise === 'pushup' && styles.activeButton)}}
-            >
-              Pushup
-            </button>
-            <button 
-              onClick={() => setExercise('squat')} 
-              style={{...styles.button, ...(exercise === 'squat' && styles.activeButton)}}
-            >
-              Squat
-            </button>
-            <button 
-              onClick={() => setExercise('bicep')} 
-              style={{...styles.button, ...(exercise === 'bicep' && styles.activeButton)}}
-            >
-              Bicep Curls
-            </button>
-            <button>
-              stop 
-            </button>
+  return (
+    <div style={styles.pageContainer}>
+      <header style={styles.header}>
+        <h1 style={styles.logo}>AI Gym Bro</h1>
+      </header>
+
+      <main style={styles.mainContent}>
+        <div style={styles.heroSection}>
+          <div style={styles.videoContainer}>
+            <h2 style={styles.sectionTitle}>Live Feed</h2>
+            <ReactWebcam
+              ref={webcamRef}
+              audio={false}
+              screenshotFormat="image/jpeg"
+              videoConstraints={{ facingMode: 'user' }}
+              style={styles.webcam}
+            />
           </div>
-          
-          <div style={styles.feedbackContainer}>
-            <h3 style={styles.feedbackHeading}>Feedback:</h3>
-            <div style={styles.feedbackBox}>{feedback}</div>
-            {annotatedImage && (
+          <div style={styles.videoContainer}>
+            <h2 style={styles.sectionTitle}>Processed Output</h2>
+            {annotatedImage ? (
               <img src={annotatedImage} alt="Annotated" style={styles.annotatedImage} />
+            ) : (
+              <div style={styles.placeholder}>Processed image will appear here</div>
             )}
           </div>
         </div>
-      </div>
-    </main>
-  </div>
-);
+
+        <div style={styles.controls}>
+          <div style={styles.buttonRow}>
+            <button
+                onClick={() => setExercise('squat')}
+                style={{ ...styles.button, ...(exercise === 'squat' && styles.activeButton) }}
+              >
+                Squat
+            </button>
+            <button
+              onClick={() => setExercise('pushup')}
+              style={{ ...styles.button, ...(exercise === 'pushup' && styles.activeButton) }}
+            >
+              Pushup
+            </button>
+            <button
+              onClick={() => setExercise('bicep')}
+              style={{ ...styles.button, ...(exercise === 'bicep' && styles.activeButton) }}
+            >
+              Bicep Curl
+            </button>
+          </div>
+          <div style={styles.buttonRow}>
+            <button onClick={handleStop} style={styles.stopButton}>
+              {isStopped ? 'AI Mode Active' : 'Stop & Switch to AI'}
+            </button>
+          </div>
+          <div style={styles.feedbackContainer}>
+            <h3 style={styles.feedbackHeading}>Feedback</h3>
+            <div style={styles.feedbackBox}>{feedback}</div>
+          </div>
+        </div>
+      </main>
+
+      <footer style={styles.footer}>
+        <p style={styles.footerText}>© 2025 AI Gym Bro. All rights reserved.</p>
+      </footer>
+    </div>
+  );
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
-container: {
-  minHeight: '100vh',
-  minWidth: '100vw',
-  backgroundColor: '#f8f9fa',
-  fontFamily: "'Roboto', sans-serif",
-  backgroundImage: "project\bg.jpg",
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  position: 'relative',
-},
-header: {
-  backgroundColor: '#1a1a1a',
-  padding: '1rem 2rem',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-},
-logo: {
-  color: '#fff',
-  fontSize: '2rem',
-  fontWeight: '700',
-  textTransform: 'uppercase',
-  letterSpacing: '2px',
-  margin: 0,
-},
-nav: {
-  display: 'flex',
-  gap: '2rem',
-  alignItems: 'center',
-},
-navLink: {
-  color: '#fff',
-  textDecoration: 'none',
-  fontWeight: '500',
-  fontSize: '1.1rem',
-  transition: 'color 0.3s ease',
-},
-mailLink: {
-  backgroundColor: '#ff4757',
-  padding: '0.5rem 1.5rem',
-  borderRadius: '20px',
-  color: '#fff',
-  textDecoration: 'none',
-  transition: 'opacity 0.3s ease',
-},
-mainContent: {
-  maxWidth: '1200px',
-  margin: '2rem auto',
-  padding: '0 2rem',
-},
-heading: {
-  textAlign: 'center',
-  fontSize: '2.5rem',
-  color: '#1a1a1a',
-  marginBottom: '3rem',
-  fontWeight: '500',
-},
-webcamSection: {
-  display: 'flex',
-  gap: '2rem',
-  alignItems: 'flex-start',
-},
-webcam: {
-  width: 640,
-  height: 480,
-  borderRadius: '10px',
-  boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-},
-controls: {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2rem',
-},
-buttonContainer: {
-  display: 'flex',
-  gap: '1rem',
-  justifyContent: 'center',
-  flexWrap: 'wrap',
-},
-button: {
-  padding: '12px 30px',
-  fontSize: '1.1rem',
-  fontWeight: '600',
-  backgroundColor: '#f8f9fa',
-  border: '2px solid #ff4757',
-  color: '#ff4757',
-  borderRadius: '25px',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-},
-activeButton: {
-  backgroundColor: '#ff4757',
-  color: '#fff',
-},
-feedbackContainer: {
-  backgroundColor: '#fff',
-  padding: '1.5rem',
-  borderRadius: '10px',
-  boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-},
-feedbackHeading: {
-  color: '#1a1a1a',
-  marginTop: 0,
-  marginBottom: '1rem',
-  fontSize: '1.5rem',
-},
-feedbackBox: {
-  backgroundColor: '#f8f9fa',
-  padding: '1rem',
-  borderRadius: '8px',
-  minHeight: '100px',
-  color: '#333',
-  fontSize: '1.1rem',
-},
-annotatedImage: {
-  width: '100%',
-  height: 'auto',
-  borderRadius: '8px',
-  marginTop: '1rem',
-},
+  pageContainer: {
+    minHeight: '100vh',
+    backgroundColor: '#f2f2f2',
+    fontFamily: "'Roboto', sans-serif",
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  header: {
+    backgroundColor: '#1a1a1a',
+    padding: '1rem 2rem',
+    textAlign: 'center',
+  },
+  logo: {
+    color: '#fff',
+    fontSize: '2.5rem',
+    margin: 0,
+  },
+  mainContent: {
+    flex: 1,
+    padding: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  heroSection: {
+    display: 'flex',
+    gap: '2rem',
+    marginBottom: '2rem',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  videoContainer: {
+    width: 640,
+    maxWidth: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: '1.8rem',
+    marginBottom: '1rem',
+    color: '#333',
+  },
+  webcam: {
+    width: '100%',
+    height: 480,
+    borderRadius: '10px',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+  },
+  annotatedImage: {
+    width: '100%',
+    height: 480,
+    borderRadius: '10px',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+  },
+  placeholder: {
+    width: '100%',
+    height: 480,
+    borderRadius: '10px',
+    backgroundColor: '#ddd',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.2rem',
+    color: '#555',
+  },
+  controls: {
+    width: '100%',
+    maxWidth: '800px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '1.5rem',
+  },
+  buttonRow: {
+    display: 'flex',
+    gap: '1rem',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  button: {
+    padding: '12px 30px',
+    fontSize: '1.1rem',
+    fontWeight: '600',
+    backgroundColor: '#fff',
+    border: '2px solid #ff4757',
+    color: '#ff4757',
+    borderRadius: '25px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  activeButton: {
+    backgroundColor: '#ff4757',
+    color: '#fff',
+  },
+  stopButton: {
+    padding: '12px 30px',
+    fontSize: '1.1rem',
+    fontWeight: '600',
+    backgroundColor: '#ff4757',
+    border: '2px solid #ff4757',
+    color: '#fff',
+    borderRadius: '25px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  feedbackContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: '1.5rem',
+    borderRadius: '10px',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+  },
+  feedbackHeading: {
+    fontSize: '1.5rem',
+    color: '#333',
+    marginBottom: '1rem',
+  },
+  feedbackBox: {
+    backgroundColor: '#f8f9fa',
+    padding: '1rem',
+    borderRadius: '8px',
+    minHeight: '80px',
+    fontSize: '1.1rem',
+    color: '#333',
+  },
+  footer: {
+    backgroundColor: '#1a1a1a',
+    padding: '1rem',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerText: {
+    color: '#fff',
+    fontSize: '0.9rem',
+    textAlign: 'center',
+  },
 };
 
 export default TestWebcamFeedback;

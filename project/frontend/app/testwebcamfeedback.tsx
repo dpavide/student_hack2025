@@ -6,9 +6,12 @@ const TestWebcamFeedback: React.FC = () => {
   const webcamRef = useRef<ReactWebcam>(null);
   const [feedback, setFeedback] = useState<string>('');
   const [annotatedImage, setAnnotatedImage] = useState<string>('');
+  const [isStopped, setIsStopped] = useState<boolean>(false);
 
   // Function to capture a frame and send it to the backend
   const analyzeFrame = async () => {
+    if (isStopped) return; // Stop analyzing if we've stopped the camera
+
     const imageData = webcamRef.current?.getScreenshot();
     if (!imageData) {
       setFeedback('Could not capture image.');
@@ -19,7 +22,6 @@ const TestWebcamFeedback: React.FC = () => {
       const response = await axios.post('http://127.0.0.1:5000/analyze', {
         image: imageData,
       });
-      // Assuming your backend returns a JSON with "feedback" and "annotated_image"
       const { feedback, annotated_image } = response.data;
       setFeedback(feedback);
       setAnnotatedImage(annotated_image);
@@ -29,13 +31,41 @@ const TestWebcamFeedback: React.FC = () => {
     }
   };
 
-  // Set up a timer to continuously analyze frames (e.g., every 1 second)
+  // Set up a timer to continuously analyze frames (every 1 second)
   useEffect(() => {
+    if (isStopped) return;
     const interval = setInterval(() => {
       analyzeFrame();
-    }, 1000); // Adjust the interval as needed
+    }, 100);
     return () => clearInterval(interval);
-  }, []);
+  }, [isStopped]);
+
+  // Stop handler: first start Gemini, wait 2 seconds, then shut down app.py
+  const handleStop = async () => {
+    try {
+      // Start Gemini process first
+      await axios.post('http://127.0.0.1:5000/start-gemini');
+      
+      // Wait 2 seconds to let gemini.py launch
+      setTimeout(async () => {
+        await axios.post('http://127.0.0.1:5000/shutdown');
+      }, 2000);
+      
+      // Stop the webcam stream
+      if (webcamRef.current) {
+        const stream = webcamRef.current.video?.srcObject;
+        if (stream) {
+          const tracks = (stream as MediaStream).getTracks();
+          tracks.forEach(track => track.stop());
+        }
+      }
+      setIsStopped(true);
+      setFeedback("Switched to AI mode - Camera stopped");
+    } catch (error) {
+      console.error('Shutdown failed:', error);
+      setFeedback("Error switching to AI mode");
+    }
+  };
 
   return (
     <div style={styles.container}>
@@ -53,6 +83,9 @@ const TestWebcamFeedback: React.FC = () => {
           <img src={annotatedImage} alt="Annotated" style={styles.annotatedImage} />
         )}
       </div>
+      <button onClick={handleStop} style={styles.button}>
+        Stop & Switch to AI Mode
+      </button>
     </div>
   );
 };
@@ -79,6 +112,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: 480,
     border: '1px solid #ccc',
     marginTop: 10,
+  },
+  button: {
+    marginTop: 20,
+    padding: '10px 20px',
+    fontSize: '16px',
+    cursor: 'pointer',
   },
 };
 
