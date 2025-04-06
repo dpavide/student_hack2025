@@ -11,7 +11,7 @@ sse = client.tts.SSEClient()
 tts_config = TTSConfig(
     lang_code='en', # replace the lang_code with the desired language code.
     sampling_rate=22050,
-    voice_id='a144a1d2-9a9a-4820-a7df-8af71eea7e7a' # replace with your desired voice_id
+    voice_id='7121f1cb-d24d-44f6-90c2-40a4b2232c7e' # replace with your desired voice_id
 )
 
 # Create an audio player with `pyaudio`
