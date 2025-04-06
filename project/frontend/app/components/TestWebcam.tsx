@@ -43,12 +43,12 @@ return (
   <div style={styles.container}>
     {/* Header Section */}
     <header style={styles.header}>
-      <h1 style={styles.logo}>FitnessIn</h1>
+      <h1 style={styles.logo}>AI Gym Bro</h1>
     </header>
 
     {/* Main Content */}
     <main style={styles.mainContent}>
-      <h2 style={styles.heading}>LOREM IPSUM DOLOR SIT AMET</h2>
+      
       
       <div style={styles.webcamSection}>
         <ReactWebcam
@@ -101,8 +101,14 @@ return (
 const styles: { [key: string]: React.CSSProperties } = {
 container: {
   minHeight: '100vh',
+  minWidth: '100vw',
   backgroundColor: '#f8f9fa',
   fontFamily: "'Roboto', sans-serif",
+  backgroundImage: "project\bg.jpg",
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  position: 'relative',
 },
 header: {
   backgroundColor: '#1a1a1a',
