@@ -11,7 +11,10 @@ from flask_cors import CORS
 import dotenv 
 
 dotenv.load_dotenv()
+
+# Own file imports
 from squat_processor import process_squat
+from push_up_processor import process_pushup
 
 app = Flask(__name__)
 CORS(app)
@@ -78,13 +81,20 @@ def analyze():
                 "feedback": feedback,
                 "annotated_image": f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
             })
-
+        
         elif current_exercise == "pushup":
-            # Dummy processing remains same
-            return jsonify({"feedback": "Dummy pushup analysis", "annotated_image": ""})
-
-        else:
-            return jsonify({"error": "Unknown exercise type"}), 400
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = pose.process(rgb_frame)
+            feedback, processed_frame, pushup_phase, last_audio_time = process_pushup(
+                frame, results, mp_pose,
+                last_audio_time, audio_queue, pushup_phase, current_time,
+                AUDIO_COOLDOWN
+            )
+            _, buffer = cv2.imencode('.jpg', processed_frame)
+            return jsonify({
+                "feedback": feedback,
+                "annotated_image": f"data:image/jpeg;base64,{base64.b64encode(buffer).decode()}"
+            })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
