@@ -1,21 +1,44 @@
 import cv2
 import numpy as np
+import mediapipe as mp
+import time
+from datetime import datetime
+import json
 
-def process_squat(frame, results, mp_pose, mp_drawing,
+# Modified logging setup
+LOG_COOLDOWN = 0.1  # Increased from 0.05 to 0.5 seconds
+last_log_times = {}  # Track cooldowns per feedback type
+
+def log_feedback(message, coordinates):
+    global last_log_times
+    current_time = time.time()
+    
+    # Get last log time for this specific message
+    last_time = last_log_times.get(message, 0)
+    
+    if current_time - last_time >= LOG_COOLDOWN:
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "feedback": message,
+            "coordinates": coordinates
+        }
+        # Write to file immediately
+        with open("temp.txt", "a") as f:
+            f.write(json.dumps(entry) + "\n")
+        
+        # Update last log time for this message type
+        last_log_times[message] = current_time
+
+def process_squat(frame, results, mp_pose,
                   last_audio_time, audio_queue, perfect_form_flag, current_time,
                   AUDIO_COOLDOWN=3):
-    """
-    Process the frame for squat analysis.
-    Returns:
-      feedback (str), annotated frame, updated perfect_form_flag, updated last_audio_time.
-    """
     feedback = "No pose detected"
     if results.pose_landmarks:
         landmarks = results.pose_landmarks.landmark
 
         def get_landmark_point(landmark, frame):
-            return [int(landmark.x * frame.shape[1]),
-                    int(landmark.y * frame.shape[0]),
+            return [landmark.x * frame.shape[1],
+                    landmark.y * frame.shape[0],
                     landmark.z]
 
         def calculate_angle(a, b, c):
@@ -29,27 +52,27 @@ def process_squat(frame, results, mp_pose, mp_drawing,
             return np.degrees(angle)
 
         def calculate_midpoint(a, b):
-            return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2]
+            return [(a[0] + b[0])/2, (a[1] + b[1])/2, (a[2] + b[2])/2]
 
-        # Get key landmarks
-        shoulderL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value], frame)
-        shoulderR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value], frame)
-        hipL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HIP.value], frame)
-        hipR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value], frame)
-        kneeL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value], frame)
-        kneeR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value], frame)
-        ankleL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value], frame)
-        ankleR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value], frame)
+        # Get landmarks
+        shoulderL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER], frame)
+        shoulderR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER], frame)
+        hipL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_HIP], frame)
+        hipR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_HIP], frame)
+        kneeL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_KNEE], frame)
+        kneeR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_KNEE], frame)
+        ankleL = get_landmark_point(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE], frame)
+        ankleR = get_landmark_point(landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE], frame)
 
-        # Calculate angles and midpoints
-        angleKneeL = int(calculate_angle(hipL, kneeL, ankleL))
-        angleKneeR = int(calculate_angle(hipR, kneeR, ankleR))
+        # Calculations
+        angleKneeL = calculate_angle(hipL, kneeL, ankleL)
+        angleKneeR = calculate_angle(hipR, kneeR, ankleR)
         midpointShoulder = calculate_midpoint(shoulderL, shoulderR)
         midpointHips = calculate_midpoint(hipL, hipR)
         midpointKnees = calculate_midpoint(kneeL, kneeR)
         angleBack = calculate_angle(midpointShoulder, midpointHips, midpointKnees)
 
-        # Squat parameters
+        # Thresholds
         knee_valgus_threshold = 100
         back_lean_threshold = 65
         depth_threshold = 0.75
@@ -61,51 +84,74 @@ def process_squat(frame, results, mp_pose, mp_drawing,
 
         perfect_form = False
 
-        # Check conditions and trigger audio cues if needed
+        # Posture checks with logging
         if not current_depth_met:
             if (current_time - last_audio_time) > AUDIO_COOLDOWN:
                 audio_queue.put("Go lower")
                 last_audio_time = current_time
             feedback = "Go lower"
             perfect_form_flag = False
+            log_feedback("go_lower", {
+                "hips": [hipL, hipR],
+                "knees": [kneeL, kneeR],
+                "depth_met": current_depth_met
+            })
         elif angleBack < back_lean_threshold:
             if (current_time - last_audio_time) > AUDIO_COOLDOWN:
                 audio_queue.put("Lean forward too much")
                 last_audio_time = current_time
             feedback = "Lean forward too much"
+            log_feedback("lean_forward", {
+                "body_angle": float(angleBack),
+                "shoulder_mid": midpointShoulder,
+                "hip_mid": midpointHips
+            })
         elif knee_valgus_left:
             if (current_time - last_audio_time) > AUDIO_COOLDOWN:
                 audio_queue.put("Left knee in")
                 last_audio_time = current_time
             feedback = "Left knee in"
+            log_feedback("knee_valgus_left", {
+                "knee": kneeL,
+                "ankle": ankleL
+            })
         elif knee_valgus_right:
             if (current_time - last_audio_time) > AUDIO_COOLDOWN:
                 audio_queue.put("Right knee in")
                 last_audio_time = current_time
             feedback = "Right knee in"
+            log_feedback("knee_valgus_right", {
+                "knee": kneeR,
+                "ankle": ankleR
+            })
         else:
             perfect_form = True
 
-        if perfect_form:
-            if current_depth_met:
-                if not perfect_form_flag:
-                    if (current_time - last_audio_time) > AUDIO_COOLDOWN:
-                        audio_queue.put("Good form, go up")
-                        last_audio_time = current_time
-                    feedback = "Perfect! Go up!"
-                    perfect_form_flag = True
-            else:
-                perfect_form_flag = False
+        if perfect_form and current_depth_met:
+            if not perfect_form_flag:
+                audio_queue.put("Good form, go up")
+                last_audio_time = current_time
+                feedback = "Perfect! Go up!"
+                perfect_form_flag = True
+                log_feedback("perfect_form", {
+                    "joint_angles": {
+                        "knees": [float(angleKneeL), float(angleKneeR)],
+                        "back": float(angleBack)
+                    },
+                    "depth_achieved": current_depth_met
+                })
+        else:
+            perfect_form_flag = False
 
-        # Draw text and landmarks on frame
-        cv2.putText(frame, feedback, (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(frame, f'{angleKneeL}', (int(kneeL[0] - 30), int(kneeL[1] - 10)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(frame, f'{angleKneeR}', (int(kneeR[0] - 30), int(kneeR[1] - 10)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(frame, f'{int(angleBack)}', (int(midpointHips[0] - 30), int(midpointHips[1] - 10)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-        feedback = "Analysis complete"
+        # Visualization
+        cv2.putText(frame, feedback, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, f'{int(angleKneeL)}', (int(kneeL[0])-30, int(kneeL[1])-10), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(frame, f'{int(angleKneeR)}', (int(kneeR[0])-30, int(kneeR[1])-10), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(frame, f'{int(angleBack)}', (int(midpointHips[0])-30, int(midpointHips[1])-10), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        mp.solutions.drawing_utils.draw_landmarks(
+            frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
     return feedback, frame, perfect_form_flag, last_audio_time
