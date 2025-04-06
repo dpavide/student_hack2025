@@ -80,7 +80,7 @@ return (
               Bicep Curls
             </button>
             <button>
-              stop
+              stop 
             </button>
           </div>
           
