@@ -1,0 +1,11 @@
+Flask==2.2.3
+Flask-Cors==3.0.10
+opencv-python==4.7.0.72
+numpy==1.23.5
+mediapipe==0.9.1.0
+python-dotenv==0.21.0
+pyneuphonic==1.8.0
+SpeechRecognition==3.8.1
+python-dotenv==0.21.0
+google-generativeai==0.4.0
+langchain==0.3.23
