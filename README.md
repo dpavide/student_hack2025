@@ -44,7 +44,7 @@ This project was built in 24 hours by a team of 4. I led real-time vision integr
 
 ```bash
 # Backend
-cd server
+cd backend
 pip install -r requirements.txt
 python app.py
 
